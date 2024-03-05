@@ -16,9 +16,7 @@ import {
 } from './runner';
 import { setupESLint } from './setup';
 
-// FIXME: tests fail when run in same thread as other integration tests
-// eslint-disable-next-line vitest/no-disabled-tests
-describe.skip('executeRunner', () => {
+describe('executeRunner', () => {
   let cwdSpy: MockInstance<[], string>;
   let platformSpy: MockInstance<[], NodeJS.Platform>;
 
@@ -44,7 +42,7 @@ describe.skip('executeRunner', () => {
     'todos-app',
   );
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     cwdSpy = vi.spyOn(process, 'cwd').mockReturnValue(appDir);
     // Windows does not require additional quotation marks for globs
     platformSpy = vi.spyOn(os, 'platform').mockReturnValue('win32');
@@ -56,7 +54,7 @@ describe.skip('executeRunner', () => {
     await writeFile(ESLINTRC_PATH, JSON.stringify(config));
   });
 
-  afterAll(async () => {
+  afterEach(async () => {
     cwdSpy.mockRestore();
     platformSpy.mockRestore();
 

@@ -9,7 +9,7 @@ describe('Nx helpers', () => {
   let cwdSpy: MockInstance<[], string>;
   const originalWorkspaceRoot = workspaceRoot;
 
-  beforeAll(() => {
+  beforeEach(() => {
     const workspaceDir = join(
       fileURLToPath(dirname(import.meta.url)),
       '..',
@@ -26,7 +26,7 @@ describe('Nx helpers', () => {
     setWorkspaceRoot(workspaceDir);
   });
 
-  afterAll(() => {
+  afterEach(() => {
     cwdSpy.mockRestore();
     setWorkspaceRoot(originalWorkspaceRoot);
   });

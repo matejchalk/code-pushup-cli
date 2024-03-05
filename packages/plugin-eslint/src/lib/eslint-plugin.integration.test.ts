@@ -25,13 +25,13 @@ describe('eslintPlugin', () => {
     },
   });
 
-  beforeAll(() => {
+  beforeEach(() => {
     cwdSpy = vi.spyOn(process, 'cwd');
     // Linux produces extra quotation marks for globs
     platformSpy = vi.spyOn(os, 'platform').mockReturnValue('linux');
   });
 
-  afterAll(() => {
+  afterEach(() => {
     cwdSpy.mockRestore();
     platformSpy.mockRestore();
   });
