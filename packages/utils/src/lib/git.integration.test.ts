@@ -6,6 +6,7 @@ import {
   getCurrentBranchOrTag,
   getGitRoot,
   getLatestCommit,
+  getMergedSemverTagsFromBranch,
   guardAgainstLocalChanges,
   safeCheckout,
   toGitPath,
@@ -106,6 +107,12 @@ describe('git utils in a git repo', () => {
         "pathspec 'non-existing-branch' did not match any file(s) known to git",
       );
     });
+
+    it('getTagsFromBranch should list no tags on a empty branch', async () => {
+      await expect(
+        getMergedSemverTagsFromBranch('master', emptyGit),
+      ).resolves.toStrictEqual([]);
+    });
   });
 
   describe('with a branch and commits dirty', () => {
@@ -162,6 +169,40 @@ describe('git utils in a git repo', () => {
       await expect(guardAgainstLocalChanges(emptyGit)).rejects.toThrow(
         'Working directory needs to be clean before we you can proceed. Commit your local changes or stash them.',
       );
+    });
+  });
+
+  describe('with a branch and tags', () => {
+    beforeAll(async () => {
+      const readme = join(baseDir, 'README.md');
+      await writeFile(readme, '# hello-world \n');
+      await emptyGit.add('README.md');
+      await emptyGit.commit('Create README');
+      await emptyGit.tag(['v1.0.0']);
+
+      await writeFile(readme, '# hello-world\n');
+      await emptyGit.commit('Hotfix build error');
+      await emptyGit.tag(['hotfix--build-error']);
+
+      await writeFile(readme, '# hello-world-2\n');
+      await emptyGit.commit('Update README 2');
+      await emptyGit.tag(['1.0.1']);
+
+      await writeFile(readme, '# hello-world-3\n');
+      await emptyGit.commit('Update README 3');
+      await emptyGit.tag(['core@1.0.2']);
+
+      await emptyGit.checkout(['master']);
+    });
+
+    afterAll(async () => {
+      await emptyGit.checkout(['master']);
+    });
+
+    it('getTagsFromBranch should list all tags on the branch', async () => {
+      await expect(
+        getMergedSemverTagsFromBranch('master', emptyGit),
+      ).resolves.toStrictEqual(['v1.0.0', 'core@1.0.2', '1.0.1']);
     });
   });
 });

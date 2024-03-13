@@ -2,6 +2,7 @@ import { isAbsolute, join, relative } from 'node:path';
 import { simpleGit } from 'simple-git';
 import { Commit, commitSchema } from '@code-pushup/models';
 import { ui } from './logging';
+import { isSemver } from './semver';
 import { toUnixPath } from './transform';
 
 export async function getLatestCommit(
@@ -82,4 +83,15 @@ export async function safeCheckout(
   }
   await guardAgainstLocalChanges(git);
   await git.checkout(branchOrHash);
+}
+
+export async function getMergedSemverTagsFromBranch(
+  branch: string,
+  git = simpleGit(),
+): Promise<string[]> {
+  return (await git.tag(['--merged', branch]))
+    .split('\n')
+    .map(tag => tag.trim())
+    .filter(Boolean)
+    .filter(isSemver);
 }

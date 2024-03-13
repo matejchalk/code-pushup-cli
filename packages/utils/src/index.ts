@@ -42,6 +42,7 @@ export {
   toGitPath,
   getCurrentBranchOrTag,
   safeCheckout,
+  getMergedSemverTagsFromBranch,
 } from './lib/git';
 export { groupByStatus } from './lib/group-by-status';
 export {
