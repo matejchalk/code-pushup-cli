@@ -1,4 +1,5 @@
 export { exists } from '@code-pushup/models';
+export { Diff, comparePairs, matchArrayItemsByKey } from './lib/diff';
 export {
   ProcessConfig,
   ProcessError,
@@ -36,10 +37,11 @@ export {
 } from './lib/formatting';
 export {
   formatGitPath,
+  getCurrentBranchOrTag,
   getGitRoot,
   getLatestCommit,
+  safeCheckout,
   toGitPath,
-  validateCommitData,
 } from './lib/git';
 export { groupByStatus } from './lib/group-by-status';
 export {
@@ -47,7 +49,7 @@ export {
   isPromiseRejectedResult,
 } from './lib/guards';
 export { logMultipleResults } from './lib/log-results';
-export { link } from './lib/logging';
+export { CliUi, Column, link, ui } from './lib/logging';
 export { ProgressBar, getProgressBar } from './lib/progress';
 export {
   CODE_PUSHUP_DOMAIN,
@@ -55,11 +57,20 @@ export {
   README_LINK,
   TERMINAL_WIDTH,
 } from './lib/reports/constants';
+export {
+  listAuditsFromAllPlugins,
+  listGroupsFromAllPlugins,
+} from './lib/reports/flatten-plugins';
 export { generateMdReport } from './lib/reports/generate-md-report';
-export { generateStdoutSummary } from './lib/reports/generate-stdout-summary';
+export { generateMdReportsDiff } from './lib/reports/generate-md-reports-diff';
+export { logStdoutSummary } from './lib/reports/log-stdout-summary';
 export { scoreReport } from './lib/reports/scoring';
 export { sortReport } from './lib/reports/sorting';
-export { ScoredReport } from './lib/reports/types';
+export {
+  ScoredCategoryConfig,
+  ScoredGroup,
+  ScoredReport,
+} from './lib/reports/types';
 export {
   calcDuration,
   compareIssueSeverity,

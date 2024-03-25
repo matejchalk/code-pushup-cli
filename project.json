@@ -28,44 +28,15 @@
         "notes": "{notes}"
       }
     },
-    "run-collect": {
-      "command": "npx dist/packages/cli collect",
+    "code-pushup": {
+      "command": "npx dist/packages/cli",
       "dependsOn": [
         {
           "projects": [
             "cli",
             "plugin-eslint",
             "plugin-coverage",
-            "examples-plugins",
-            "react-todos-app"
-          ],
-          "target": "build"
-        }
-      ]
-    },
-    "run-upload": {
-      "command": "npx dist/packages/cli upload",
-      "dependsOn": [
-        {
-          "projects": [
-            "cli",
-            "plugin-eslint",
-            "plugin-coverage",
-            "examples-plugins",
-            "react-todos-app"
-          ],
-          "target": "build"
-        }
-      ]
-    },
-    "run-autorun": {
-      "command": "npx dist/packages/cli autorun",
-      "dependsOn": [
-        {
-          "projects": [
-            "cli",
-            "plugin-eslint",
-            "plugin-coverage",
+            "plugin-js-packages",
             "examples-plugins",
             "react-todos-app"
           ],

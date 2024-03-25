@@ -13,6 +13,7 @@ export {
   categoryConfigSchema,
   categoryRefSchema,
 } from './lib/category-config';
+export { Commit, commitSchema } from './lib/commit';
 export { CoreConfig, coreConfigSchema } from './lib/core-config';
 export { Group, GroupRef, groupRefSchema, groupSchema } from './lib/group';
 export {
@@ -20,9 +21,9 @@ export {
   SUPPORTED_CONFIG_FILE_FORMATS,
 } from './lib/implementation/configuration';
 export {
-  PERSIST_FILENAME,
-  PERSIST_FORMAT,
-  PERSIST_OUTPUT_DIR,
+  DEFAULT_PERSIST_FILENAME,
+  DEFAULT_PERSIST_FORMAT,
+  DEFAULT_PERSIST_OUTPUT_DIR,
 } from './lib/implementation/constants';
 export {
   MAX_DESCRIPTION_LENGTH,
@@ -58,6 +59,22 @@ export {
   pluginReportSchema,
   reportSchema,
 } from './lib/report';
+export {
+  AuditDiff,
+  AuditResult,
+  CategoryDiff,
+  CategoryResult,
+  GroupDiff,
+  GroupResult,
+  ReportsDiff,
+  auditDiffSchema,
+  auditResultSchema,
+  categoryDiffSchema,
+  categoryResultSchema,
+  groupDiffSchema,
+  groupResultSchema,
+  reportsDiffSchema,
+} from './lib/reports-diff';
 export {
   OnProgress,
   RunnerConfig,

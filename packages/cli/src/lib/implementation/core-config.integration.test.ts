@@ -1,9 +1,11 @@
 import { describe, expect, vi } from 'vitest';
 import {
   CoreConfig,
-  PERSIST_FILENAME,
-  PERSIST_FORMAT,
-  PERSIST_OUTPUT_DIR,
+  DEFAULT_PERSIST_FILENAME,
+  DEFAULT_PERSIST_FORMAT,
+  DEFAULT_PERSIST_OUTPUT_DIR,
+  PersistConfig,
+  UploadConfig,
 } from '@code-pushup/models';
 import { CORE_CONFIG_MOCK, MINIMAL_CONFIG_MOCK } from '@code-pushup/test-utils';
 import { yargsCli } from '../yargs-cli';
@@ -58,10 +60,10 @@ describe('parsing values from CLI and middleware', () => {
       },
     ).parseAsync();
 
-    expect(persist).toEqual({
-      filename: PERSIST_FILENAME,
-      format: PERSIST_FORMAT,
-      outputDir: PERSIST_OUTPUT_DIR,
+    expect(persist).toEqual<PersistConfig>({
+      filename: DEFAULT_PERSIST_FILENAME,
+      format: DEFAULT_PERSIST_FORMAT,
+      outputDir: DEFAULT_PERSIST_OUTPUT_DIR,
     });
   });
 
@@ -79,7 +81,7 @@ describe('parsing values from CLI and middleware', () => {
       },
     ).parseAsync();
 
-    expect(persist).toEqual({
+    expect(persist).toEqual<PersistConfig>({
       filename: 'cli-filename',
       format: ['md'],
       outputDir: 'cli-outputDir',
@@ -95,7 +97,7 @@ describe('parsing values from CLI and middleware', () => {
       },
     ).parseAsync();
 
-    expect(persist).toEqual({
+    expect(persist).toEqual<PersistConfig>({
       filename: 'rc-filename',
       format: ['json', 'md'],
       outputDir: 'rc-outputDir',
@@ -116,7 +118,7 @@ describe('parsing values from CLI and middleware', () => {
       },
     ).parseAsync();
 
-    expect(persist).toEqual({
+    expect(persist).toEqual<PersistConfig>({
       filename: 'cli-filename',
       format: ['md'],
       outputDir: 'cli-outputDir',
@@ -135,9 +137,9 @@ describe('parsing values from CLI and middleware', () => {
       },
     ).parseAsync();
 
-    expect(persist).toEqual({
+    expect(persist).toEqual<PersistConfig>({
       filename: 'rc-filename',
-      format: PERSIST_FORMAT,
+      format: DEFAULT_PERSIST_FORMAT,
       outputDir: 'cli-outputdir',
     });
   });
@@ -163,7 +165,7 @@ describe('parsing values from CLI and middleware', () => {
       },
     ).parseAsync();
 
-    expect(upload).toStrictEqual({
+    expect(upload).toStrictEqual<UploadConfig>({
       organization: 'code-pushup',
       project: 'portal',
       apiKey: 'dummy-api-key',

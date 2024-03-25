@@ -3,13 +3,13 @@ import {
   uploadToPortal,
 } from '@code-pushup/portal-client';
 import { PersistConfig, Report, UploadConfig } from '@code-pushup/models';
-import { getLatestCommit, loadReport } from '@code-pushup/utils';
+import { loadReport } from '@code-pushup/utils';
 import { reportToGQL } from './implementation/report-to-gql';
 import { GlobalOptions } from './types';
 
 export type UploadOptions = { upload?: UploadConfig } & {
   persist: Required<PersistConfig>;
-} & GlobalOptions;
+} & Partial<GlobalOptions>;
 
 /**
  * Uploads collected audits to the portal
@@ -27,15 +27,14 @@ export async function upload(
     ...options.persist,
     format: 'json',
   });
-  const commitData = await getLatestCommit();
-  if (!commitData) {
-    throw new Error('no commit data available');
+  if (!report.commit) {
+    throw new Error('Commit must be linked in order to upload report');
   }
 
   const data: SaveReportMutationVariables = {
     organization,
     project,
-    commit: commitData.hash,
+    commit: report.commit.hash,
     ...reportToGQL(report),
   };
 

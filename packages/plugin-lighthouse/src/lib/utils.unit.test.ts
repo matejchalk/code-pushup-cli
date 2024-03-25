@@ -1,11 +1,6 @@
 import Details from 'lighthouse/types/lhr/audit-details';
-import { describe, expect, it } from 'vitest';
-import {
-  Audit,
-  Group,
-  PluginConfig,
-  pluginConfigSchema,
-} from '@code-pushup/models';
+import {describe, expect, it} from 'vitest';
+import {Audit, Group, PluginConfig, pluginConfigSchema,} from '@code-pushup/models';
 import {
   AuditsNotImplementedError,
   CategoriesNotImplementedError,
@@ -152,10 +147,10 @@ describe('filterAuditsAndGroupsByOnlyOptions to be used in plugin config', () =>
         { onlyAudits: ['speed-index'] },
       );
 
-    expect(filteredAudits).toStrictEqual([
+    expect(filteredAudits).toStrictEqual<Audit[]>([
       { slug: 'speed-index', title: 'Speed Index' },
     ]);
-    expect(filteredGroups).toStrictEqual([
+    expect(filteredGroups).toStrictEqual<Group[]>([
       {
         slug: 'performance',
         title: 'Performance',
@@ -195,10 +190,10 @@ describe('filterAuditsAndGroupsByOnlyOptions to be used in plugin config', () =>
         ],
         { onlyAudits: ['speed-index'] },
       );
-    expect(filteredAudits).toStrictEqual([
+    expect(filteredAudits).toStrictEqual<Audit[]>([
       { slug: 'speed-index', title: 'Speed Index' },
     ]);
-    expect(filteredGroups).toStrictEqual([
+    expect(filteredGroups).toStrictEqual<Group[]>([
       {
         slug: 'performance',
         title: 'Performance',
@@ -245,10 +240,10 @@ describe('filterAuditsAndGroupsByOnlyOptions to be used in plugin config', () =>
         { onlyCategories: ['coverage'] },
       );
 
-    expect(filteredAudits).toStrictEqual([
+    expect(filteredAudits).toStrictEqual<Audit[]>([
       { slug: 'function-coverage', title: 'Function Coverage' },
     ]);
-    expect(filteredGroups).toStrictEqual([
+    expect(filteredGroups).toStrictEqual<Group[]>([
       {
         slug: 'coverage',
         title: 'Code coverage',
@@ -298,10 +293,10 @@ describe('filterAuditsAndGroupsByOnlyOptions to be used in plugin config', () =>
         },
       );
 
-    expect(filteredAudits).toStrictEqual([
+    expect(filteredAudits).toStrictEqual<Audit[]>([
       { slug: 'function-coverage', title: 'Function Coverage' },
     ]);
-    expect(filteredGroups).toStrictEqual([
+    expect(filteredGroups).toStrictEqual<Group[]>([
       {
         slug: 'coverage',
         title: 'Code coverage',

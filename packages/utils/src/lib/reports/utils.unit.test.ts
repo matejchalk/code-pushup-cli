@@ -5,12 +5,15 @@ import { MEMFS_VOLUME, REPORT_MOCK, reportMock } from '@code-pushup/test-utils';
 import { ScoredReport, SortableAuditReport, SortableGroup } from './types';
 import {
   calcDuration,
+  colorByScoreDiff,
   compareAudits,
   compareCategoryAuditsAndGroups,
   compareIssueSeverity,
   compareIssues,
   countWeightedRefs,
+  formatDiffNumber,
   formatReportScore,
+  formatScoreWithColor,
   getPluginNameFromSlug,
   getSortableAuditByRef,
   getSortableGroupByRef,
@@ -35,6 +38,48 @@ describe('formatReportScore', () => {
       expect(formatReportScore(score)).toBe(expected);
     },
   );
+});
+
+describe('formatScoreWithColor', () => {
+  it('should include colored circle and value multiplied by 100 in bold', () => {
+    expect(formatScoreWithColor(1)).toBe('🟢 **100**');
+  });
+
+  it('should skip round value and optionally skip bold formatting', () => {
+    expect(formatScoreWithColor(0.123)).toBe('🔴 **12**');
+  });
+});
+
+describe('colorByScoreDiff', () => {
+  it('should use green badge if score increased', () => {
+    expect(colorByScoreDiff('🠋 −8 %', 0.03)).toMatch(/shields\.io.*-green/);
+  });
+
+  it('should use red badge if score dropped', () => {
+    expect(colorByScoreDiff('🠉 +33 %', -1)).toMatch(/shields\.io.*-red/);
+  });
+
+  it("should use gray badge if score didn't change", () => {
+    expect(colorByScoreDiff('🠉 +50 %', 0)).toMatch(/shields\.io.*-gray/);
+  });
+});
+
+describe('formatDiffNumber', () => {
+  it('should include plus sign for positive numbers', () => {
+    expect(formatDiffNumber(5)).toBe('+5');
+  });
+
+  it('should include minus sign for negative numbers', () => {
+    expect(formatDiffNumber(-1)).toBe('−1');
+  });
+
+  it('should use unicode symbol for positive infinity', () => {
+    expect(formatDiffNumber(Number.POSITIVE_INFINITY)).toBe('+∞');
+  });
+
+  it('should use unicode symbol for negative infinity', () => {
+    expect(formatDiffNumber(Number.NEGATIVE_INFINITY)).toBe('−∞');
+  });
 });
 
 describe('calcDuration', () => {
@@ -79,7 +124,7 @@ describe('getSortableAuditByRef', () => {
           },
         ],
       ),
-    ).toStrictEqual({
+    ).toStrictEqual<SortableAuditReport>({
       slug: 'function-coverage',
       title: 'Function coverage',
       score: 1,
@@ -172,7 +217,7 @@ describe('getSortableGroupByRef', () => {
           },
         ],
       ),
-    ).toStrictEqual({
+    ).toStrictEqual<SortableGroup>({
       slug: 'code-coverage',
       title: 'Code coverage',
       score: 0.66,
@@ -310,12 +355,10 @@ describe('countWeightedRefs', () => {
 
 describe('compareIssueSeverity', () => {
   it('should order severities in logically ascending order when used as compareFn with .sort()', () => {
-    const severityArr = ['error', 'info', 'warning'] satisfies IssueSeverity[];
-    expect([...severityArr].sort(compareIssueSeverity)).toEqual([
-      'info',
-      'warning',
-      'error',
-    ]);
+    const severityArr: IssueSeverity[] = ['error', 'info', 'warning'];
+    expect([...severityArr].sort(compareIssueSeverity)).toEqual<
+      IssueSeverity[]
+    >(['info', 'warning', 'error']);
   });
 });
 

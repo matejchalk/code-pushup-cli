@@ -14,7 +14,7 @@ export type ScoredGroup = Group & {
 
 export type ScoredReport = Omit<Report, 'plugins' | 'categories'> & {
   plugins: (Omit<PluginReport, 'groups'> & {
-    groups: ScoredGroup[];
+    groups?: ScoredGroup[];
   })[];
   categories: ScoredCategoryConfig[];
 };
@@ -28,3 +28,5 @@ export type SortableAuditReport = AuditReport & {
   weight: number;
   plugin: string;
 };
+
+export type DiffOutcome = 'positive' | 'negative' | 'mixed' | 'unchanged';

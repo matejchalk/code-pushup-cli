@@ -5,12 +5,11 @@ import {
   MultipleFileResults,
   directoryExists,
   generateMdReport,
-  generateStdoutSummary,
-  getLatestCommit,
   logMultipleFileResults,
+  logStdoutSummary,
   scoreReport,
   sortReport,
-  validateCommitData,
+  ui,
 } from '@code-pushup/utils';
 
 export class PersistDirError extends Error {
@@ -32,33 +31,30 @@ export async function persistReport(
   const { outputDir, filename, format } = options;
 
   const sortedScoredReport = sortReport(scoreReport(report));
-  console.info(generateStdoutSummary(sortedScoredReport));
+  // terminal output
+  logStdoutSummary(sortedScoredReport);
 
   // collect physical format outputs
-  const results = await Promise.all(
-    format.map(async reportType => {
-      switch (reportType) {
-        case 'json':
-          return {
-            format: 'json',
-            content: JSON.stringify(report, null, 2),
-          };
-        case 'md':
-          const commitData = await getLatestCommit();
-          validateCommitData(commitData);
-          return {
-            format: 'md',
-            content: generateMdReport(sortedScoredReport, commitData),
-          };
-      }
-    }),
-  );
+  const results = format.map(reportType => {
+    switch (reportType) {
+      case 'json':
+        return {
+          format: 'json',
+          content: JSON.stringify(report, null, 2),
+        };
+      case 'md':
+        return {
+          format: 'md',
+          content: generateMdReport(sortedScoredReport),
+        };
+    }
+  });
 
   if (!(await directoryExists(outputDir))) {
     try {
       await mkdir(outputDir, { recursive: true });
     } catch (error) {
-      console.warn(error);
+      ui().logger.warning((error as Error).toString());
       throw new PersistDirError(outputDir);
     }
   }
@@ -81,7 +77,7 @@ async function persistResult(reportPath: string, content: string) {
       .then(() => stat(reportPath))
       .then(stats => [reportPath, stats.size] as const)
       .catch(error => {
-        console.warn(error);
+        ui().logger.warning((error as Error).toString());
         throw new PersistError(reportPath);
       })
   );

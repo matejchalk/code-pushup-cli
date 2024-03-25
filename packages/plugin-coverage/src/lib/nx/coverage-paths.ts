@@ -1,6 +1,7 @@
 import type { ProjectGraphProjectNode, TargetConfiguration } from '@nx/devkit';
 import chalk from 'chalk';
 import { join } from 'node:path';
+import { ui } from '@code-pushup/utils';
 import { CoverageResult } from '../config';
 
 /**
@@ -9,10 +10,14 @@ import { CoverageResult } from '../config';
  */
 export async function getNxCoveragePaths(
   targets: string[] = ['test'],
+  verbose?: boolean,
 ): Promise<CoverageResult[]> {
-  console.info(
-    chalk.bold('💡 Gathering coverage from the following nx projects:'),
-  );
+  if (verbose) {
+    ui().logger.info(
+      chalk.bold('💡 Gathering coverage from the following nx projects:'),
+    );
+  }
+
   const { createProjectGraphAsync } = await import('@nx/devkit');
   const { nodes } = await createProjectGraphAsync({ exitOnError: false });
 
@@ -26,8 +31,9 @@ export async function getNxCoveragePaths(
       const coveragePath = getCoveragePathForTarget(target, targetConfig, name);
       const rootToReportsDir = join(data.root, coveragePath);
 
-      console.info(`- ${name}: ${target}`);
-
+      if (verbose) {
+        ui().logger.info(`- ${name}: ${target}`);
+      }
       return {
         pathToProject: data.root,
         resultsPath: join(rootToReportsDir, 'lcov.info'),
@@ -35,7 +41,10 @@ export async function getNxCoveragePaths(
     });
   });
 
-  console.info('\n');
+  if (verbose) {
+    ui().logger.info('\n');
+  }
+
   return coverageResults.flat();
 }
 

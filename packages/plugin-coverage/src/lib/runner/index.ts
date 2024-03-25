@@ -7,10 +7,11 @@ import {
   ensureDirectoryExists,
   executeProcess,
   readJsonFile,
+  ui,
 } from '@code-pushup/utils';
 import { FinalCoveragePluginConfig } from '../config';
 import { applyMaxScoreAboveThreshold } from '../utils';
-import { PLUGIN_CONFIG_PATH, RUNNER_OUTPUT_PATH, WORKDIR } from './constants';
+import { PLUGIN_CONFIG_PATH, RUNNER_OUTPUT_PATH } from './constants';
 import { lcovResultsToAuditOutputs } from './lcov/lcov-runner';
 
 export async function executeRunner(): Promise<void> {
@@ -24,10 +25,14 @@ export async function executeRunner(): Promise<void> {
       await executeProcess({ command, args });
     } catch (error) {
       if (error instanceof ProcessError) {
-        console.error(chalk.bold('stdout from failed coverage tool process:'));
-        console.error(error.stdout);
-        console.error(chalk.bold('stderr from failed coverage tool process:'));
-        console.error(error.stderr);
+        ui().logger.error(
+          chalk.bold('stdout from failed coverage tool process:'),
+        );
+        ui().logger.error(error.stdout);
+        ui().logger.error(
+          chalk.bold('stderr from failed coverage tool process:'),
+        );
+        ui().logger.error(error.stderr);
       }
 
       throw new Error(
@@ -36,7 +41,7 @@ export async function executeRunner(): Promise<void> {
     }
   }
 
-  // Caculate coverage from LCOV results
+  // Calculate coverage from LCOV results
   const auditOutputs = await lcovResultsToAuditOutputs(reports, coverageTypes);
 
   await ensureDirectoryExists(dirname(RUNNER_OUTPUT_PATH));
@@ -48,7 +53,7 @@ export async function createRunnerConfig(
   config: FinalCoveragePluginConfig,
 ): Promise<RunnerConfig> {
   // Create JSON config for executeRunner
-  await ensureDirectoryExists(WORKDIR);
+  await ensureDirectoryExists(dirname(PLUGIN_CONFIG_PATH));
   await writeFile(PLUGIN_CONFIG_PATH, JSON.stringify(config));
 
   const threshold = config.perfectScoreThreshold;

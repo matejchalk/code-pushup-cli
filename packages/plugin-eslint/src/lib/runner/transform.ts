@@ -6,6 +6,7 @@ import {
   objectToEntries,
   pluralizeToken,
   truncateIssueMessage,
+  ui,
 } from '@code-pushup/utils';
 import { ruleIdToSlug } from '../meta/hash';
 import type { LinterOutput } from './types';
@@ -25,7 +26,7 @@ export function lintResultsToAudits({
     .reduce<Record<string, LintIssue[]>>((acc, issue) => {
       const { ruleId, message, filePath } = issue;
       if (!ruleId) {
-        console.warn(`ESLint core error - ${message}`);
+        ui().logger.warning(`ESLint core error - ${message}`);
         return acc;
       }
       const options = ruleOptionsPerFile[filePath]?.[ruleId] ?? [];
@@ -64,16 +65,18 @@ function convertIssue(issue: LintIssue): Issue {
     severity: convertSeverity(issue.severity),
     source: {
       file: issue.filePath,
-      position: {
-        startLine: issue.line,
-        ...(issue.column > 0 && { startColumn: issue.column }),
-        ...(issue.endLine &&
-          issue.endLine > 0 && {
-            endLine: issue.endLine,
-          }),
-        ...(issue.endColumn &&
-          issue.endColumn > 0 && { endColumn: issue.endColumn }),
-      },
+      ...(issue.line > 0 && {
+        position: {
+          startLine: issue.line,
+          ...(issue.column > 0 && { startColumn: issue.column }),
+          ...(issue.endLine &&
+            issue.endLine > 0 && {
+              endLine: issue.endLine,
+            }),
+          ...(issue.endColumn &&
+            issue.endColumn > 0 && { endColumn: issue.endColumn }),
+        },
+      }),
     },
   };
 }

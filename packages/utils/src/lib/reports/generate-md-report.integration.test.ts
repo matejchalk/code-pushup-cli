@@ -14,35 +14,19 @@ describe('generateMdReport', () => {
     vi.useRealTimers();
   });
 
-  it('should contain all sections when using the fixture report', () => {
-    const commit = {
-      hash: '41682a2fec1d4ece81c696a26c08984baeb4bcf3',
-      message: 'refactor(cli): fix exec target',
-      author: 'BioPhoton',
-      date: 'Sat Sep 10 12:00:00 2021 +0200',
-    };
-    const mdReport = generateMdReport(
-      sortReport(scoreReport(reportMock())),
-      commit,
-    );
-    expect(mdReport).toContain(
-      `${commit.message} (${commit.hash.slice(0, 7)})`,
-    );
+  it('should contain all sections when using the fixture report', async () => {
+    const mdReport = generateMdReport(sortReport(scoreReport(reportMock())));
     expect(mdReport).toContain('🏷 Category');
-    expect(mdReport).toMatchSnapshot();
+    await expect(mdReport).toMatchFileSnapshot('__snapshots__/report.md');
   });
 
-  it('should not contain category sections when categories are empty', () => {
+  it('should not contain category sections when categories are empty', async () => {
     const mdReport = generateMdReport(
       sortReport(scoreReport({ ...reportMock(), categories: [] })),
-      {
-        hash: '41682a2fec1d4ece81c696a26c08984baeb4bcf3',
-        message: 'refactor(cli): fix exec target',
-        author: 'BioPhoton',
-        date: 'Sat Sep 10 12:00:00 2021 +0200',
-      },
     );
     expect(mdReport).not.toContain('🏷 Category');
-    expect(mdReport).toMatchSnapshot();
+    await expect(mdReport).toMatchFileSnapshot(
+      '__snapshots__/report-no-categories.md',
+    );
   });
 });

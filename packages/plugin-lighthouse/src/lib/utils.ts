@@ -1,15 +1,20 @@
-import { type CliFlags } from 'lighthouse';
+import { type CliFlags as LighthouseFlags } from 'lighthouse';
 import { Result } from 'lighthouse/types/lhr/audit-result';
 import { Audit, AuditOutput, AuditOutputs, Group } from '@code-pushup/models';
-import { filterItemRefsBy, objectToCliArgs, toArray } from '@code-pushup/utils';
+import {
+  filterItemRefsBy,
+  objectToCliArgs,
+  toArray,
+  ui,
+} from '@code-pushup/utils';
 import { LIGHTHOUSE_REPORT_NAME } from './constants';
 
 type RefinedLighthouseOption = {
-  url: CliFlags['_'];
-  chromeFlags?: Record<CliFlags['chromeFlags'][number], string>;
+  url: LighthouseFlags['_'];
+  chromeFlags?: Record<LighthouseFlags['chromeFlags'][number], string>;
 };
 export type LighthouseCliOptions = RefinedLighthouseOption &
-  Partial<Omit<CliFlags, keyof RefinedLighthouseOption>>;
+  Partial<Omit<LighthouseFlags, keyof RefinedLighthouseOption>>;
 
 export function getLighthouseCliArguments(
   options: LighthouseCliOptions,
@@ -92,8 +97,7 @@ export function toAuditOutputs(lhrAudits: Result[]): AuditOutputs {
 
       // @TODO implement switch case for detail parsing. Related to #90
       const unsupportedType = details.type;
-      // @TODO use cliui.logger.info Resolve TODO after PR #487 is merged.
-      console.info(
+      ui().logger.info(
         `Parsing details from type ${unsupportedType} is not implemented.`,
       );
 
@@ -124,7 +128,7 @@ export function validateOnlyCategories(
 export function filterAuditsAndGroupsByOnlyOptions(
   audits: Audit[],
   groups: Group[],
-  options?: Pick<CliFlags, 'onlyAudits' | 'onlyCategories'>,
+  options?: Pick<LighthouseFlags, 'onlyAudits' | 'onlyCategories'>,
 ): {
   audits: Audit[];
   groups: Group[];
