@@ -1,3 +1,7 @@
+## 0.34.0 (2024-04-04)
+
+This was a version bump only, there were no code changes.
+
 # Changelog
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
