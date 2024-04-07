@@ -19,7 +19,8 @@ In your `nx.json` under the root property add `plugins` add `@code-pushup/nx-plu
 
 Try it out by executing the following commands:
 
-- `nx run <project-without-config>:code-pushup` - adds `code-pushup.condif.ts` to your project root
+- `nx run <project-without-config>:code-pushup` - adds `code-pushup.config.ts` to your project root
+- `nx run <project-without-config>:code-pushup` - adds `code-pushup.config.ts` to your project root
 - `nx run <project-with-config>:code-pushup` - runs `npx code-pushup` to your project root
 - `nx run <project-with-config>:code-pushup` - runs `npx code-pushup` to your project root
 - `nx show project <project>`- logs JSON string of project config to terminal
@@ -32,7 +33,7 @@ Set workspace specific target defaults in your `nx.json`:
 ```json
 {
   "targetDefaults": {
-    "cp": {
+    "code-pushup": {
       "dependsOn": [
         {
           "projects": ["test-setup"],
@@ -64,6 +65,14 @@ To configure the plugin globally use the plugin options.
     }
   ]
 }
+```
+
+Try it out by executing the following commands:
+
+```bash
+nx run <project-without-config>:cp
+nx run cp
+nx cp
 ```
 
 - `projectPrefix` - adds a prefix to all projects but root. "<project>" to "cp-<project>"
