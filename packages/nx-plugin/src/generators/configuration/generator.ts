@@ -8,11 +8,11 @@ import {
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ui } from '@code-pushup/utils';
-import { AddToProjectGeneratorSchema } from './schema';
+import { InitProjectGeneratorSchema } from './schema';
 
 export async function addToProjectGenerator(
   tree: Tree,
-  options: AddToProjectGeneratorSchema,
+  options: InitProjectGeneratorSchema,
 ) {
   const projectConfiguration = readProjectConfiguration(tree, options.project);
 
