@@ -43,12 +43,26 @@ export async function codePushupTarget(
 ) {
   const { createOptions, projectRoot, workspaceRoot } = createNodeContext;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/no-unnecessary-condition,@typescript-eslint/naming-convention
-  const { projectPrefix, targetName: __, ...options } = createOptions ?? {};
+  const {
+    projectPrefix,
+    targetName: __,
+    ...unparsedOptions
+  } = createOptions ?? {};
+
+  const parseUploadOptions = (options: Record<string, unknown>) =>
+    Object.fromEntries(
+      Object.entries(options).map(([opt, val]) => {
+        if (['project', 'organization', 'api-key', 'server'].includes(opt)) {
+          return [`upload.${opt}`, val];
+        }
+        return [opt, val];
+      }),
+    );
 
   const target = {
     command: `node ${workspaceRoot}/dist/packages/cli/index.js`,
     options: {
-      ...options,
+      ...parseUploadOptions(unparsedOptions),
       // parse options related to the code-pushup logic
       ...(await coreOptions(createNodeContext)),
       // if a projectRoot is given switch cwd to it
