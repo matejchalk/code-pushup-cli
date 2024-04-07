@@ -142,5 +142,6 @@
     "commitizen": {
       "path": "@commitlint/cz-commitlint"
     }
-  }
+  },
+  "executors": "./executors.json"
 }

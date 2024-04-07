@@ -45,6 +45,20 @@
         "packageRoot": "dist/{projectRoot}",
         "registry": "https://registry.npmjs.org/"
       }
+    },
+    "cp2": {
+      "dependsOn": [
+        {
+          "projects": [
+            "cli",
+            "plugin-eslint",
+            "plugin-coverage",
+            "plugin-js-packages",
+            "examples-plugins"
+          ],
+          "target": "build"
+        }
+      ]
     }
   },
   "namedInputs": {
@@ -115,5 +129,14 @@
       }
     },
     "releaseTagPattern": "v{version}"
-  }
+  },
+  "plugins": [
+    {
+      "plugin": "@code-pushup/nx-plugin",
+      "options": {
+        "targetName": "cp",
+        "projectPrefix": "cli"
+      }
+    }
+  ]
 }

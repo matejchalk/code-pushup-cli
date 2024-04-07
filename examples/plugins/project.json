@@ -37,40 +37,15 @@
         "config": "examples/plugins/vite.config.integration.ts",
         "reportsDirectory": "../../coverage/examples-plugins/integration-tests"
       }
-    },
-    "run-collect": {
-      "command": "npx dist/packages/cli collect --config=examples/plugins/code-pushup.config.ts --persist.format=md",
-      "dependsOn": [
-        "build",
-        "^build",
-        {
-          "projects": ["cli"],
-          "target": "build"
-        }
-      ]
-    },
-    "run-print-config": {
-      "command": "npx dist/packages/cli print-config --config=examples/plugins/code-pushup.config.ts",
-      "dependsOn": [
-        "build",
-        "^build",
-        {
-          "projects": ["cli"],
-          "target": "build"
-        }
-      ]
-    },
-    "run-help": {
-      "command": "npx dist/packages/cli help",
-      "dependsOn": [
-        "build",
-        "^build",
-        {
-          "projects": ["cli"],
-          "target": "build"
-        }
-      ]
     }
+  },
+  "code-pushup": {
+    "dependsOn": [
+      {
+        "projects": ["cli", "examples-plugins"],
+        "target": "build"
+      }
+    ]
   },
   "tags": ["scope:internal", "type:feature"]
 }

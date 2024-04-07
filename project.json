@@ -10,7 +10,8 @@
         "storage": "tmp/local-registry/storage"
       }
     },
-    "code-pushup": {
+    "cpu": {
+      "executor": "./dist/packages/nx-plugin:autorun",
       "dependsOn": [
         {
           "projects": [

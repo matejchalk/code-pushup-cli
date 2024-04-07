@@ -1,14 +1,6 @@
-import { join } from 'node:path';
 import {
-  LIGHTHOUSE_OUTPUT_FILE_DEFAULT,
   fileSizePlugin,
   fileSizeRecommendedRefs,
-  lighthouseCorePerfGroupRefs,
-  lighthousePlugin,
-  packageJsonDocumentationGroupRef,
-  packageJsonPerformanceGroupRef,
-  packageJsonPlugin,
-  packageJsonVersionControlGroupRef,
 } from '../../dist/examples/plugins';
 
 /**
@@ -23,45 +15,17 @@ import {
 const config = {
   plugins: [
     fileSizePlugin({
-      directory: './dist/packages',
+      directory: '../../dist/packages',
       pattern: /\.js$/,
       // eslint-disable-next-line no-magic-numbers
       budget: 42_000,
-    }),
-    packageJsonPlugin({
-      directory: './packages',
-      license: 'MIT',
-      type: 'module',
-      dependencies: {
-        zod: '^3.22.4',
-      },
-    }),
-    await lighthousePlugin({
-      url: 'https://staging.code-pushup.dev/login',
-      outputPath: join('.code-pushup', LIGHTHOUSE_OUTPUT_FILE_DEFAULT),
-      headless: false,
-      verbose: true,
     }),
   ],
   categories: [
     {
       slug: 'performance',
       title: 'Performance',
-      refs: [
-        ...fileSizeRecommendedRefs,
-        packageJsonPerformanceGroupRef,
-        ...lighthouseCorePerfGroupRefs,
-      ],
-    },
-    {
-      slug: 'bug-prevention',
-      title: 'Bug prevention',
-      refs: [packageJsonVersionControlGroupRef],
-    },
-    {
-      slug: 'documentation',
-      title: 'Documentation',
-      refs: [packageJsonDocumentationGroupRef],
+      refs: [...fileSizeRecommendedRefs],
     },
   ],
 };
