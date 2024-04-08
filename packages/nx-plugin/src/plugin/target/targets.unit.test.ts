@@ -66,25 +66,33 @@ describe('codePushupTarget', () => {
   it('should process opt.plugins and load plugins when given as file path', async () => {
     const target = await codePushupTarget({
       createOptions: {
-        plugins: ['node_modules/@code-pushup/eslint-plugin/index.js'],
+        plugins: [
+          {
+            plugin: 'node_modules/@code-pushup/eslint-plugin/index.js',
+          },
+        ],
       },
     } as NormalizedCreateNodesContext);
 
     expect(target.options?.plugins).toHaveLength(1);
     expect(target.options?.plugins?.[0]?.slug).toBe('eslint-plugin');
   });
-  /*
+
   it('should process opt.plugins and load plugins when given as js package', async () => {
     const target = await codePushupTarget({
       createOptions: {
-        plugins: ['@code-pushup/eslint-plugin'],
+        plugins: [
+          {
+            plugin: '@code-pushup/eslint-plugin',
+          },
+        ],
       },
     } as NormalizedCreateNodesContext);
 
     expect(target.options?.plugins).toHaveLength(1);
     expect(target.options?.plugins?.[0]?.slug).toBe('eslint-plugin');
   });
-*/
+
   it('should process opt.plugins and load plugins when given as js object', async () => {
     const target = await codePushupTarget({
       createOptions: {
