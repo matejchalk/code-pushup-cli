@@ -42,12 +42,11 @@ export async function codePushupTarget(
   createNodeContext: NormalizedCreateNodesContext,
 ) {
   const { createOptions, projectRoot, workspaceRoot } = createNodeContext;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/no-unnecessary-condition,@typescript-eslint/naming-convention
   const {
-    projectPrefix,
-    targetName: __,
+    // projectPrefix,
+    // targetName: _,
     ...unparsedOptions
-  } = createOptions ?? {};
+  } = createOptions;
 
   const parseUploadOptions = (options: Record<string, unknown>) =>
     Object.fromEntries(

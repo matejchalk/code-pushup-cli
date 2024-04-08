@@ -1,5 +1,5 @@
-import { PluginConfiguration, ProjectConfiguration } from '@nx/devkit';
-import { dirname, join, normalize, resolve } from 'node:path';
+import { PluginConfiguration } from '@nx/devkit';
+import { dirname, join, resolve } from 'node:path';
 import { z } from 'zod';
 import type { PluginConfig, UploadConfig } from '@code-pushup/models';
 import type { NormalizedCreateNodesContext } from '../model';
@@ -44,17 +44,12 @@ export async function coreOptions(
   createNodeContext: NormalizedCreateNodesContext,
   // projectJson: Pick<CreateTargetOptions, 'projectPrefix'> & Pick<ProjectConfiguration, 'name' | 'sourceRoot'>
 ): Promise<CodePushupTargetOptions> {
-  // eslint-disable-next-line  @typescript-eslint/consistent-type-assertions
-  const {
-    workspaceRoot,
-    projectRoot,
-    projectJson = {} as ProjectConfiguration,
-    createOptions,
-  } = createNodeContext;
+  const { workspaceRoot, projectRoot, projectJson, createOptions } =
+    createNodeContext;
 
   const { name: projectName = '' } = projectJson;
 
-  const { projectPrefix, plugins } = createOptions ?? {};
+  const { projectPrefix } = createOptions;
   const prefix = projectPrefix ? `${projectPrefix}-` : undefined;
   const rootDir = projectRoot === '.' ? projectRoot : workspaceRoot;
 
@@ -84,11 +79,6 @@ export async function coreOptions(
 
 export type ResolvePluginsOptions = {
   plugins: PluginConfiguration[];
-};
-
-type ResolvedPluginConfiguration<T = Record<string, unknown>> = {
-  plugin: (options?: T) => PluginConfig;
-  options: T;
 };
 
 // load plugins by PluginConfiguration. plugin string referencing the plugin module

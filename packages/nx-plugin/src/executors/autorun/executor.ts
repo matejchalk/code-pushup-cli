@@ -1,7 +1,7 @@
 import { AutorunExecutorSchema } from './schema';
 
-export default async function runExecutor(options: AutorunExecutorSchema) {
-  console.log('Executor ran for Autorun', options);
+export default function runExecutor(options: AutorunExecutorSchema) {
+  console.info('Executor ran for Autorun', options);
   return {
     success: true,
   };

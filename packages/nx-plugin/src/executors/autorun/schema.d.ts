@@ -1,1 +1,1 @@
-export interface AutorunExecutorSchema {} // eslint-disable-line
+export type AutorunExecutorSchema = NonNullable<unknown>;

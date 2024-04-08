@@ -2,7 +2,11 @@ import type { CreateNodesContext, ProjectConfiguration } from '@nx/devkit';
 import { ResolvePluginsOptions } from './target/code-pushup-helper';
 import { CodePushupTargetOptions } from './target/model';
 import { CreateTargetOptions } from './target/targets';
-import { NormalizedPluginConfiguration } from './utils';
+
+export type NormalizedPluginConfiguration = {
+  plugin: string;
+  options?: unknown;
+};
 
 export type CreateNodesOptions = CreateTargetOptions &
   Partial<ResolvePluginsOptions> &

@@ -5,12 +5,11 @@ import {
 } from '@nx/devkit';
 import { readFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
-import { CreateNodesOptions, NormalizedCreateNodesContext } from './model';
-
-export type NormalizedPluginConfiguration = {
-  plugin: string;
-  options?: unknown;
-};
+import {
+  CreateNodesOptions,
+  NormalizedCreateNodesContext,
+  NormalizedPluginConfiguration,
+} from './model';
 
 export function normalizePluginsConfiguration(
   configs: PluginConfiguration[],
@@ -37,11 +36,11 @@ export async function normalizedCreateNodesContext(
   ) as ProjectConfiguration;
   return {
     ...context,
-    projectJson,
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    projectJson: projectJson ?? {},
     projectRoot,
     createOptions: {
       ...options,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       plugins: normalizePluginsConfiguration(plugins),
     },
   };
