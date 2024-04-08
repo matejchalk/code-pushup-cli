@@ -12,12 +12,14 @@ export const createNodes: CreateNodes = [
     createNodesOptions: unknown,
     context: CreateNodesContext,
   ): Promise<CreateNodesResult> => {
+
     const parsedCreateVodesOptions = createNodesOptions as CreateNodesOptions;
     const normalizedContext = await normalizedCreateNodesContext(
       context,
       projectConfigurationFile,
       parsedCreateVodesOptions,
     );
+
     return {
       projects: {
         [normalizedContext.projectRoot]: {

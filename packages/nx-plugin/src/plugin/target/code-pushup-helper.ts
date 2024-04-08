@@ -49,7 +49,7 @@ export async function coreOptions(
 
   const { name: projectName = '' } = projectJson;
 
-  const { projectPrefix } = createOptions;
+  const { projectPrefix, plugins } = createOptions;
   const prefix = projectPrefix ? `${projectPrefix}-` : undefined;
   const rootDir = projectRoot === '.' ? projectRoot : workspaceRoot;
 
@@ -73,7 +73,7 @@ export async function coreOptions(
           }
         : {}),
     },
-    // plugins: await resolvePluginsConfigs({plugins}),
+     plugins: await resolvePluginsConfigs({plugins}),
   };
 }
 

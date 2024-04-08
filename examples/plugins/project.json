@@ -39,7 +39,7 @@
       }
     }
   },
-  "code-pushup": {
+  "cp": {
     "dependsOn": [
       {
         "projects": ["cli", "examples-plugins"],
