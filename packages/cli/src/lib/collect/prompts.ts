@@ -1,5 +1,4 @@
 import { confirm, input, select } from '@inquirer/prompts';
-import { Prompt } from '@inquirer/type';
 import simpleGit, { LogOptions } from 'simple-git';
 import { getMergedSemverTagsFromBranch } from '@code-pushup/utils';
 
