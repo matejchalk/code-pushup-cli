@@ -208,6 +208,22 @@ describe('git utils in a git repo', () => {
           2,
         ),
       );
+      expect(errorMsg).toMatch(
+        JSON.stringify(
+          {
+            not_added: ['new-file.md'],
+            files: [
+              {
+                path: 'new-file.md',
+                index: '?',
+                working_dir: '?',
+              },
+            ],
+          },
+          null,
+          2,
+        ),
+      );
     });
   });
 
