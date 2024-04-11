@@ -2,6 +2,7 @@ import chalk from 'chalk';
 import { ArgumentsCamelCase, CommandModule } from 'yargs';
 import { HistoryOptions, getHashes, history } from '@code-pushup/core';
 import { getCurrentBranchOrTag, safeCheckout, ui } from '@code-pushup/utils';
+import { historyPrompt } from '../collect/prompts';
 import { CLI_NAME } from '../constants';
 import { yargsOnlyPluginsOptionsDefinition } from '../implementation/only-plugins.options';
 import { HistoryCliOptions } from './history.model';
@@ -36,6 +37,8 @@ export function yargsHistoryCommandObject() {
         to,
         ...restOptions
       } = args as unknown as HistoryCliOptions & HistoryOptions;
+
+      await historyPrompt({ branch: targetBranch, from, to, maxCount });
 
       // determine history to walk
       const commits: string[] = await getHashes({ maxCount, from, to });

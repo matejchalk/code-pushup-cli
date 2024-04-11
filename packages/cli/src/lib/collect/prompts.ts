@@ -1,84 +1,133 @@
 import { confirm, input, select } from '@inquirer/prompts';
 import simpleGit, { LogOptions } from 'simple-git';
 import { getMergedSemverTagsFromBranch } from '@code-pushup/utils';
+import { HistoryCliOnlyOptions } from '../history/history.model';
 
-export async function historyPrompt<
-  O extends Partial<LogOptions> & { branch?: string },
->(options?: O) {
-  const { branch, maxCount = -1, from, to } = options ?? {};
+async function promptTargetBranch() {
+  const summary = await simpleGit().branch(['-r']);
 
-  // 1. branch name
-  const branchSummary = await simpleGit().branch(['-r']);
-  const branchInput =
-    branch ??
-    (await select({
-      message: 'Select a branch:',
-      choices: branchSummary.all.map(branch => ({ value: branch })),
-      default: 'origin/main',
-    }));
-
-  // 2. list tags only or all commits
-  const filterBy = await select({
-    message: 'Do you want to crawl tags or commits?',
-    choices: [{ value: 'tag' }, { value: 'commit' }],
+  return select({
+    message: 'Select a branch:',
+    choices: summary.all.map(branch => ({ value: branch })),
+    default: 'origin/main',
   });
+}
 
-  // 3. number of history walks
-  const maxCountInput =
-    maxCount < 0
-      ? Number(
-          await input({
-            message:
-              'How many commits/tags should the history include? (Leave empty for all)',
-            validate: v => v === '' || !isNaN(Number(v)),
-            transformer: v => (v === '' ? '-1' : v),
-          }),
-        )
-      : maxCount;
+function promptCommitTypeFilter() {
+  return confirm({
+    message: 'Do you want to by semver tagged commits?',
+  });
+}
 
-  // 4. select start
-  const tagsOrCommits =
-    filterBy === 'tag'
-      ? await getMergedSemverTagsFromBranch(branchInput)
-      : (await simpleGit().log()).all.map(({ hash }) => hash);
+async function promptMaxCount() {
+  const prompResult = await input({
+    message:
+      'How many commits/tags should the history include? (Leave empty for all)',
+    validate: (v: string | number) => v === '' || !Number.isNaN(Number(v)),
+    transformer: (v: string) => (v === '' ? '-1' : v),
+  });
+  return Number(prompResult);
+}
 
-  const fromInput =
-    from ??
-    (await select({
-      message: `Select a ${filterBy} from which the history should start crawling:`,
-      choices: tagsOrCommits.map(tagOrCommit => ({ value: tagOrCommit })),
-    }));
+function promptFrom(
+  tagsOrCommits: string[],
+  { semverTag }: { semverTag: boolean; maxCount?: number },
+) {
+  return select({
+    message: `Select a ${
+      semverTag ? 'tag' : 'commit'
+    } from which the history should start crawling:`,
+    choices: tagsOrCommits.map(tagOrCommit => ({ value: tagOrCommit })),
+  });
+}
 
-  const toIndex = tagsOrCommits.indexOf(fromInput);
+async function promptTo(
+  tagsOrCommits: string[],
+  {
+    semverTag,
+    maxCount,
+    from,
+  }: {
+    semverTag: boolean;
+    maxCount: number;
+    from: string;
+  },
+) {
+  const toIndex = tagsOrCommits.indexOf(from);
   const filteredTagsOrCommits = tagsOrCommits.slice(
-    Math.min(maxCountInput, toIndex + 1),
+    Math.min(maxCount, toIndex + 1),
   );
 
-  // 5. select optional end
-  // eslint-disable-next-line functional/no-let
-  let toInput = '';
-  if (filteredTagsOrCommits.length > maxCountInput) {
+  if (filteredTagsOrCommits.length > maxCount) {
     const toNeeded = await confirm({
       message: `Do you want to specify until where the history should crawl?`,
       default: false,
     });
     if (toNeeded) {
-      toInput =
-        to ??
-        (await select({
-          message: `Select a ${filterBy} until which the history should crawl:`,
-          choices: filteredTagsOrCommits.map(tagOrCommit => ({
-            value: tagOrCommit,
-          })),
-        }));
+      return await select({
+        message: `Select a ${
+          semverTag ? 'tag' : 'commit'
+        } until which the history should crawl:`,
+        choices: filteredTagsOrCommits.map(tagOrCommit => ({
+          value: tagOrCommit,
+        })),
+      });
     }
   }
 
+  return '';
+}
+
+async function filterByCommitType(
+  targetBranch: string,
+  { semverTag = true }: { semverTag: boolean },
+) {
+  return semverTag
+    ? await getMergedSemverTagsFromBranch(targetBranch)
+    : (await simpleGit().log()).all.map(({ hash }) => hash);
+}
+
+export async function historyPrompt<
+  O extends Partial<LogOptions> & HistoryCliOnlyOptions,
+>(options?: O) {
+  const { targetBranch, maxCount = -1, from, to, semverTag } = options ?? {};
+
+  // 1. branch name
+  const targetBranchInput = targetBranch ?? (await promptTargetBranch());
+
+  // 2. list tags only or all commits
+  const semverTagInput = semverTag ?? (await promptCommitTypeFilter());
+
+  // 3. number of history walks
+  const maxCountInput = maxCount < 0 ? await promptMaxCount() : maxCount;
+
+  const tagsOrCommits = await filterByCommitType(targetBranchInput, {
+    semverTag: semverTagInput,
+  });
+
+  // 4. select start
+  const fromInput =
+    from ??
+    (await promptFrom(tagsOrCommits, {
+      semverTag: semverTagInput,
+      maxCount: maxCountInput,
+    }));
+
+  // 5. select optional end
+  // eslint-disable-next-line functional/no-let
+  const toInput =
+    to ??
+    (await promptTo(tagsOrCommits, {
+      semverTag: semverTagInput,
+      from: fromInput,
+      maxCount: maxCountInput,
+    }));
+
   // create partial history options
   return {
-    branch: branchInput,
-    ...(fromInput !== '' ? { from: fromInput } : {}),
-    ...(toInput !== '' ? { to: toInput } : {}),
+    ...(targetBranchInput === '' ? {} : { branch: targetBranchInput }),
+    ...(fromInput === '' ? {} : { from: fromInput }),
+    ...(toInput === '' ? {} : { to: toInput }),
     ...(maxCountInput >= 0 ? { maxCount: maxCountInput } : {}),
   };
 }

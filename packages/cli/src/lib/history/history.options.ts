@@ -11,6 +11,11 @@ export function yargsHistoryOptionsDefinition(): Record<
       type: 'string',
       default: 'main',
     },
+    semverTag: {
+      describe: 'filter by semver tagged commits',
+      type: 'string',
+      default: 'main',
+    },
     forceCleanStatus: {
       describe:
         'If we reset the status to a clean git history forcefully or not.',

@@ -4,7 +4,6 @@ export {
 } from './lib/collect-and-persist';
 export { compareReportFiles, compareReports } from './lib/compare';
 export { CollectOptions, collect } from './lib/implementation/collect';
-export { HistoryOnlyOptions, HistoryOptions } from './lib/history';
 export { ReportsToCompare } from './lib/implementation/compare-scorables';
 export {
   PluginOutputMissingAuditError,
