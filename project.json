@@ -19,7 +19,7 @@
             "plugin-eslint",
             "plugin-coverage",
             "plugin-js-packages",
-            "react-todos-app"
+            "plugin-lighthouse"
           ],
           "target": "build"
         }

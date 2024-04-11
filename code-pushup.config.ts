@@ -1,5 +1,12 @@
 import 'dotenv/config';
 import { z } from 'zod';
+import {
+  fileSizePlugin,
+  fileSizeRecommendedRefs,
+  packageJsonDocumentationGroupRef,
+  packageJsonPerformanceGroupRef,
+  packageJsonPlugin,
+} from './dist/examples/plugins';
 import coveragePlugin, {
   getNxCoveragePaths,
 } from './dist/packages/plugin-coverage';
@@ -7,6 +14,10 @@ import eslintPlugin, {
   eslintConfigFromNxProjects,
 } from './dist/packages/plugin-eslint';
 import jsPackagesPlugin from './dist/packages/plugin-js-packages';
+import {
+  lighthouseGroupRef,
+  lighthousePlugin,
+} from './dist/packages/plugin-lighthouse';
 import type { CoreConfig, UploadConfig } from './packages/models/src';
 
 // load upload configuration from environment
@@ -60,16 +71,56 @@ const config: CoreConfig = {
           'integration-test',
           '--coverage.enabled',
           '--skipNxCache',
-          '--exclude=test-setup,test-utils'
+          '--exclude=test-setup,test-utils',
         ],
       },
       reports: await getNxCoveragePaths(['unit-test', 'integration-test']),
     }),
 
     await jsPackagesPlugin({ packageManager: 'npm' }),
+
+    fileSizePlugin({
+      directory: './dist/examples/react-todos-app',
+      pattern: /\.js$/,
+      budget: 174_080, // 170 kB
+    }),
+
+    packageJsonPlugin({
+      directory: './dist/packages',
+      license: 'MIT',
+      type: 'module',
+    }),
+
+    await lighthousePlugin('https://codepushup.dev/'),
   ],
 
   categories: [
+    {
+      slug: 'performance',
+      title: 'Performance',
+      refs: [lighthouseGroupRef('performance')],
+    },
+    {
+      slug: 'a11y',
+      title: 'Accessibility',
+      refs: [lighthouseGroupRef('accessibility')],
+    },
+    {
+      slug: 'best-practices',
+      title: 'Best Practices',
+      refs: [lighthouseGroupRef('best-practices')],
+    },
+    {
+      slug: 'seo',
+      title: 'SEO',
+      refs: [lighthouseGroupRef('seo')],
+    },
+    {
+      slug: 'pwa',
+      title: 'PWA',
+      isBinary: true,
+      refs: [lighthouseGroupRef('pwa')],
+    },
     {
       slug: 'bug-prevention',
       title: 'Bug prevention',
@@ -122,6 +173,15 @@ const config: CoreConfig = {
           slug: 'npm-outdated',
           weight: 1,
         },
+      ],
+    },
+    {
+      slug: 'custom-checks',
+      title: 'Custom checks',
+      refs: [
+        ...fileSizeRecommendedRefs,
+        packageJsonPerformanceGroupRef,
+        packageJsonDocumentationGroupRef,
       ],
     },
   ],
