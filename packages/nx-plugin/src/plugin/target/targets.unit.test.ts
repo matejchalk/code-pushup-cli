@@ -1,146 +1,78 @@
-import { join } from 'node:path';
-import { expect } from 'vitest';
+import { vol } from 'memfs';
+import { rm } from 'node:fs/promises';
+import { beforeEach, expect } from 'vitest';
+import { MEMFS_VOLUME } from '@code-pushup/test-utils';
+import { CP_TARGET_NAME } from '../../utils/constants';
 import { NormalizedCreateNodesContext } from '../model';
-import { codePushupTarget, initTarget } from './targets';
+import { createTargets } from './targets';
 
-describe('initTarget', () => {
-  it('should create code-pushup--init target when called', () => {
+describe('createTargets', () => {
+  beforeEach(async () => {
+    // needed to have the folder present. readdir otherwise it fails
+    vol.fromJSON(
+      {
+        x: '',
+      },
+      MEMFS_VOLUME,
+    );
+    await rm('x');
+  });
+  it('should create dynamic targets when called', async () => {
     const projectName = 'plugin-my-plugin';
-    expect(initTarget(projectName)).toEqual({
-      command: `nx g nx-plugin:init --project=${projectName}`,
+    await expect(
+      createTargets({
+        projectRoot: '.',
+        projectJson: {
+          name: projectName,
+        },
+        createOptions: {},
+      } as NormalizedCreateNodesContext),
+    ).resolves.toStrictEqual({
+      [`${CP_TARGET_NAME}--init`]: {
+        command: `nx g nx-plugin:init --project=${projectName}`,
+      },
     });
   });
-});
 
-describe('codePushupTarget', () => {
-  it('should process arguments and provide default options', async () => {
-    const target = await codePushupTarget({} as NormalizedCreateNodesContext);
-
-    expect(target.options?.persist?.format).toStrictEqual(['md', 'json']);
-    expect(target.options?.progress).toBe(false);
-  });
-
-  it('should process projectJson.name and provide project option', async () => {
+  it('should consider targetName for dynamic target names', async () => {
     const projectName = 'plugin-my-plugin';
-    const target = await codePushupTarget({
-      projectJson: { name: projectName },
-    } as NormalizedCreateNodesContext);
-
-    expect(target.options?.upload?.project).toBe(projectName);
+    const targetName = 'cp';
+    await expect(
+      createTargets({
+        projectRoot: '.',
+        projectJson: {
+          name: projectName,
+        },
+        createOptions: {
+          targetName,
+        },
+      } as NormalizedCreateNodesContext),
+    ).resolves.toStrictEqual({
+      [`${targetName}--init`]: {
+        command: `nx g nx-plugin:init --project=${projectName}`,
+      },
+    });
   });
 
-  it('should process projectJson.projectRoot and provide project option cwd when projectRoot IS given', async () => {
-    const projectRoot = join('packages', 'plugin-my-plugin');
-    const target = await codePushupTarget({
-      projectRoot,
-    } as NormalizedCreateNodesContext);
-
-    expect(target.options?.cwd).toBe(projectRoot);
-  });
-
-  it('should process opt.projectPrefix and DO prefix project name when projectJson.name & projectJson.sourceRoot IS given', async () => {
+  it('should return NO dynamic target if code-pushup config is given', async () => {
     const projectName = 'plugin-my-plugin';
-    const projectPrefix = 'cp';
-    const target = await codePushupTarget({
-      projectJson: { name: projectName, sourceRoot: '.' },
-      createOptions: { projectPrefix },
-    } as NormalizedCreateNodesContext);
-
-    expect(target.options?.upload?.project).toMatch(
-      new RegExp(`^(${projectPrefix})-${projectName}`),
+    vol.fromJSON(
+      {
+        [`code-pushup.config.ts`]: `{}`,
+      },
+      MEMFS_VOLUME,
     );
-  });
-
-  it('should process opt.projectPrefix and NOT prefix project name when projectJson.sourceRoot is NOT given', async () => {
-    const projectName = 'plugin-my-plugin';
-    const target = await codePushupTarget({
-      workspaceRoot: '.',
-      projectRoot: '.',
-      createOptions: {},
-      projectJson: { name: projectName },
-    } as NormalizedCreateNodesContext);
-
-    expect(target.options?.upload?.project).toBe(projectName);
-  });
-
-  it('should process opt.plugins and load plugins when given as file path', async () => {
-    const target = await codePushupTarget({
-      createOptions: {
-        plugins: [
-          {
-            plugin: 'node_modules/@code-pushup/eslint-plugin/index.js',
-          },
-        ],
-      },
-    } as NormalizedCreateNodesContext);
-
-    expect(target.options?.plugins).toHaveLength(1);
-    expect(target.options?.plugins?.[0]?.slug).toBe('eslint-plugin');
-  });
-
-  it('should process opt.plugins and load plugins when given as js package', async () => {
-    const target = await codePushupTarget({
-      createOptions: {
-        plugins: [
-          {
-            plugin: '@code-pushup/eslint-plugin',
-          },
-        ],
-      },
-    } as NormalizedCreateNodesContext);
-
-    expect(target.options?.plugins).toHaveLength(1);
-    expect(target.options?.plugins?.[0]?.slug).toBe('eslint-plugin');
-  });
-
-  it('should process opt.plugins and load plugins when given as js object', async () => {
-    const target = await codePushupTarget({
-      createOptions: {
-        plugins: [
-          {
-            plugin: '@code-pushup/eslint-plugin',
-          },
-        ],
-      },
-    } as NormalizedCreateNodesContext);
-
-    expect(target.options?.plugins).toHaveLength(1);
-    expect(target.options?.plugins?.[0]?.slug).toBe('eslint-plugin');
-  });
-
-  it('should process opt.plugins and load plugins from js object and consider options', async () => {
-    const target = await codePushupTarget({
-      createOptions: {
-        plugins: [
-          {
-            plugin: '@code-pushup/eslint-plugin',
-            options: {
-              eslintrc: '.eslintrc.(json|ts)',
-              patterns: ['src', 'test/*.spec.js'],
-            },
-          },
-        ],
-      },
-    } as NormalizedCreateNodesContext);
-
-    expect(target.options?.plugins).toHaveLength(1);
-    expect(target.options?.plugins?.[0]?.slug).toBe('eslint-plugin');
-    expect(target.options?.plugins?.[0]?.description).toBe(
-      JSON.stringify({
-        eslintrc: '.eslintrc.(json|ts)',
-        patterns: ['src', 'test/*.spec.js'],
-      }),
-    );
-  });
-
-  it('should process context.workspaceRoot and provide command if workspaceRoot IS given', async () => {
-    const target = await codePushupTarget({
-      workspaceRoot: 'root',
-      projectRoot: '.',
-      createOptions: {},
-      projectJson: { name: 'kk' },
-    } as NormalizedCreateNodesContext);
-
-    expect(target.command).toBe('node root/dist/packages/cli/index.js');
+    const targetName = 'cp';
+    await expect(
+      createTargets({
+        projectRoot: '.',
+        projectJson: {
+          name: projectName,
+        },
+        createOptions: {
+          targetName,
+        },
+      } as NormalizedCreateNodesContext),
+    ).resolves.toStrictEqual({});
   });
 });

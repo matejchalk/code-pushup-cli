@@ -134,12 +134,7 @@
     {
       "plugin": "@code-pushup/nx-plugin",
       "options": {
-        "targetName": "cp",
-        "projectPrefix": "cli",
-        "plugins": [
-          "@code-pushup/eslit-plugin"
-        ],
-        "excluded-targets": []
+        "targetName": "cp"
       }
     }
   ]
