@@ -1,0 +1,87 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`executeRunner > should successfully execute runner for npm audit 1`] = `
+[
+  {
+    "details": {
+      "issues": [
+        {
+          "message": "\`semver\` dependency has a **moderate** vulnerability in versions **<5.7.2**. Fix available: Update \`semver\` to version **5.7.2**. More information: [semver vulnerable to Regular Expression Denial of Service](https://github.com/advisories/GHSA-c2qf-rxjj-qqgw)",
+          "severity": "warning",
+        },
+      ],
+    },
+    "displayValue": "1 vulnerability (1 moderate)",
+    "score": 0.95,
+    "slug": "npm-audit-prod",
+    "value": 1,
+  },
+  {
+    "details": {
+      "issues": [
+        {
+          "message": "\`vite\` dependency has a **high** vulnerability in versions **4.0.0 - 4.5.1**. Fix is available. More information: [Vite XSS vulnerability in \`server.transformIndexHtml\` via URL payload](https://github.com/advisories/GHSA-92r3-m2mg-pj97)",
+          "severity": "error",
+        },
+      ],
+    },
+    "displayValue": "1 vulnerability (1 high)",
+    "score": 0.9,
+    "slug": "npm-audit-dev",
+    "value": 1,
+  },
+  {
+    "displayValue": "0 vulnerabilities",
+    "score": 1,
+    "slug": "npm-audit-optional",
+    "value": 0,
+  },
+]
+`;
+
+exports[`executeRunner > should successfully execute runner for npm outdated 1`] = `
+[
+  {
+    "details": {
+      "issues": [
+        {
+          "message": "Package [\`react\`](https://reactjs.org/) requires a **major** update from **16.14.0** to **18.2.0**.",
+          "severity": "error",
+        },
+        {
+          "message": "Package [\`semver\`](https://github.com/npm/node-semver#readme) requires a **major** update from **5.7.1** to **7.6.0**.",
+          "severity": "error",
+        },
+      ],
+    },
+    "displayValue": "2 major outdated package versions",
+    "score": 0,
+    "slug": "npm-outdated-prod",
+    "value": 2,
+  },
+  {
+    "details": {
+      "issues": [
+        {
+          "message": "Package [\`vite\`](https://vitejs.dev) requires a **major** update from **4.5.0** to **5.2.8**.",
+          "severity": "error",
+        },
+        {
+          "message": "Package [\`vitest\`](https://github.com/vitest-dev/vitest#readme) requires a **major** update from **0.34.0** to **1.4.0**.",
+          "severity": "error",
+        },
+      ],
+    },
+    "displayValue": "2 major outdated package versions",
+    "score": 0,
+    "slug": "npm-outdated-dev",
+    "value": 2,
+  },
+  {
+    "displayValue": "all dependencies are up to date",
+    "score": 1,
+    "slug": "npm-outdated-optional",
+    "value": 0,
+  },
+]
+`;
