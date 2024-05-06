@@ -40,7 +40,7 @@
   "scripts": {
     "prepare": "husky install",
     "commit": "git-cz",
-    "knip": "knip"
+    "knip": "knip --no-exit-code --exclude duplicates --reporter markdown"
   },
   "private": true,
   "engine": {

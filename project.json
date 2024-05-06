@@ -26,6 +26,15 @@
           "target": "build"
         }
       ]
+    },
+    "knip": {
+      "command": "npx knip --no-exit-code --exclude duplicates --reporter=./dist/packages/plugin-knip/reporter.js  --reporter-options='{\"outputFile\":\".code-pushup/knip/knip.report.json\",\"rawOutputFile\":\".code-pushup/knip/knip.raw.report.json\", \"verbose\": true}'",
+      "dependsOn": [
+        {
+          "projects": ["plugin-knip"],
+          "target": "build"
+        }
+      ]
     }
   }
 }

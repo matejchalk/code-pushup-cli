@@ -2,6 +2,12 @@
   "name": "@code-pushup/knip-plugin",
   "version": "0.0.0",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "knip": "^5.9.4",
+    "chalk": "^5.3.0",
+    "zod": "^3.22.4",
+    "@code-pushup/models": "0.39.0",
+    "@code-pushup/utils": "0.39.0"
+  },
   "peerDependencies": {}
 }

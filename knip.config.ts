@@ -50,7 +50,6 @@ const withNxStandards = (): KnipConfigPlugin => () => {
     commitlint: {
       config: ['commitlint.config.js'],
     },
-    exclude: ['duplicates'],
     entry: [
       // unknown why this is needed, it should be picked up by knip from the vitest setup files
       'testing/test-utils/src/index.ts',
@@ -66,7 +65,7 @@ const withNxStandards = (): KnipConfigPlugin => () => {
       'examples/plugins/src/package-json/src/index.ts',
       // missing knip plugin for now, so this is in the root entry
       'packages/models/zod2md.config.ts',
-      'code-pushup.config.ts',
+      //'code-pushup.config.ts',
       'esbuild.config.js',
       'tools/**/*.{js,mjs,ts,cjs,mts,cts}',
     ],
