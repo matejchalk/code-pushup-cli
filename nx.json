@@ -43,6 +43,11 @@
         "packageRoot": "dist/{projectRoot}",
         "registry": "https://registry.npmjs.org/"
       }
+    },
+    "@nx/rollup:rollup": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
     }
   },
   "namedInputs": {
@@ -109,5 +114,13 @@
       }
     },
     "releaseTagPattern": "v{version}"
-  }
+  },
+  "plugins": [
+    {
+      "plugin": "./tools/plugins/dual-build-targets.plugin.ts",
+      "options": {
+        "projects": ["models", "utils", "core", "cli", "nx-plugin"]
+      }
+    }
+  ]
 }
