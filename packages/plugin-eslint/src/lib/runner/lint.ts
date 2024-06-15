@@ -2,25 +2,34 @@ import type { ESLint, Linter } from 'eslint';
 import { rm, writeFile } from 'node:fs/promises';
 import { platform } from 'node:os';
 import { join } from 'node:path';
-import { distinct, executeProcess, toArray } from '@code-pushup/utils';
+import {
+  ProcessError,
+  distinct,
+  executeProcess,
+  toArray,
+} from '@code-pushup/utils';
 import type { ESLintTarget } from '../config';
 import { setupESLint } from '../setup';
 import type { LinterOutput, RuleOptionsPerFile } from './types';
 
-export async function lint({
-  eslintrc,
-  patterns,
-}: ESLintTarget): Promise<LinterOutput> {
-  const results = await executeLint({ eslintrc, patterns });
+export async function lint(
+  { eslintrc, patterns }: ESLintTarget,
+  options?: EsLintFlags,
+): Promise<LinterOutput> {
+  const results = await executeLint({ eslintrc, patterns }, options);
   const ruleOptionsPerFile = await loadRuleOptionsPerFile(eslintrc, results);
   return { results, ruleOptionsPerFile };
 }
 
-function executeLint({
-  eslintrc,
-  patterns,
-}: ESLintTarget): Promise<ESLint.LintResult[]> {
+export type EsLintFlags = { debug: boolean };
+
+function executeLint(
+  { eslintrc, patterns }: ESLintTarget,
+  options?: EsLintFlags,
+): Promise<ESLint.LintResult[]> {
   return withConfig(eslintrc, async configPath => {
+    const { debug = false } = options ?? {};
+
     // running as CLI because ESLint#lintFiles() runs out of memory
     const { stdout } = await executeProcess({
       command: 'npx',
@@ -30,6 +39,7 @@ function executeLint({
         ...(typeof eslintrc === 'object' ? ['--no-eslintrc'] : []),
         '--no-error-on-unmatched-pattern',
         '--format=json',
+        ...(debug ? ['--debug'] : []),
         ...toArray(patterns).map(pattern =>
           // globs need to be escaped on Unix
           platform() === 'win32' ? pattern : `'${pattern}'`,

@@ -46,7 +46,7 @@ const config: CoreConfig = {
     }),
 
   plugins: [
-    await eslintPlugin(await eslintConfigFromAllNxProjects()),
+    await eslintPlugin(await eslintConfigFromAllNxProjects(), { debug: true }),
 
     await coveragePlugin({
       coverageToolCommand: {

@@ -1,6 +1,7 @@
 import type { ESLint } from 'eslint';
 import { type ZodType, z } from 'zod';
 import { toArray } from '@code-pushup/utils';
+import { EsLintFlags } from './runner/lint';
 
 const patternsSchema = z.union([z.string(), z.array(z.string()).min(1)], {
   description:
@@ -41,4 +42,5 @@ export type ESLintPluginConfig = z.input<typeof eslintPluginConfigSchema>;
 export type ESLintPluginRunnerConfig = {
   targets: ESLintTarget[];
   slugs: string[];
+  options?: EsLintFlags;
 };

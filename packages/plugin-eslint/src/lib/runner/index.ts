@@ -7,7 +7,7 @@ import {
   readJsonFile,
 } from '@code-pushup/utils';
 import { ESLintPluginRunnerConfig, type ESLintTarget } from '../config';
-import { lint } from './lint';
+import { EsLintFlags, lint } from './lint';
 import { lintResultsToAudits, mergeLinterOutputs } from './transform';
 import type { LinterOutput } from './types';
 
@@ -20,12 +20,11 @@ export const PLUGIN_CONFIG_PATH = join(
 );
 
 export async function executeRunner(): Promise<void> {
-  const { slugs, targets } = await readJsonFile<ESLintPluginRunnerConfig>(
-    PLUGIN_CONFIG_PATH,
-  );
+  const { slugs, targets, options } =
+    await readJsonFile<ESLintPluginRunnerConfig>(PLUGIN_CONFIG_PATH);
 
   const linterOutputs = await targets.reduce(
-    async (acc, target) => [...(await acc), await lint(target)],
+    async (acc, target) => [...(await acc), await lint(target, options)],
     Promise.resolve<LinterOutput[]>([]),
   );
   const lintResults = mergeLinterOutputs(linterOutputs);
@@ -50,8 +49,10 @@ export async function createRunnerConfig(
   scriptPath: string,
   audits: Audit[],
   targets: ESLintTarget[],
+  options?: EsLintFlags,
 ): Promise<RunnerConfig> {
   const config: ESLintPluginRunnerConfig = {
+    options,
     targets,
     slugs: audits.map(audit => audit.slug),
   };

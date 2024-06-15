@@ -5,6 +5,7 @@ import { name, version } from '../../package.json';
 import { ESLintPluginConfig, eslintPluginConfigSchema } from './config';
 import { listAuditsAndGroups } from './meta';
 import { createRunnerConfig } from './runner';
+import { EsLintFlags } from './runner/lint';
 
 /**
  * Instantiates Code PushUp ESLint plugin for use in core config.
@@ -28,6 +29,7 @@ import { createRunnerConfig } from './runner';
  */
 export async function eslintPlugin(
   config: ESLintPluginConfig,
+  options?: EsLintFlags,
 ): Promise<PluginConfig> {
   const targets = eslintPluginConfigSchema.parse(config);
 
@@ -50,6 +52,11 @@ export async function eslintPlugin(
     audits,
     groups,
 
-    runner: await createRunnerConfig(runnerScriptPath, audits, targets),
+    runner: await createRunnerConfig(
+      runnerScriptPath,
+      audits,
+      targets,
+      options,
+    ),
   };
 }
