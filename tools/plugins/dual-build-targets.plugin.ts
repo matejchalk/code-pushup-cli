@@ -113,7 +113,7 @@ function buildTargets(
       outputs: ['{options.outputPath}'],
       defaultConfiguration: 'production',
       options: {
-        outputPath: `dist/${sourceRoot}/${name}`,
+        outputPath: `dist/${projectRoot}`,
         main: `${sourceRoot}/index.ts`,
         tsConfig: `${projectRoot}/tsconfig.lib.json`,
         compiler: 'tsc',

@@ -1,4 +1,5 @@
-import isaacs_cliui from '@isaacs/cliui';
+// @ts-ignore
+import isaacs_cliui from '@isaacs/cliui/index.mjs';
 import { cliui } from '@poppinss/cliui';
 import chalk from 'chalk';
 import { TERMINAL_WIDTH } from './reports/constants';

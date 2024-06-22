@@ -1,8 +1,15 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "module": "ES2020",
     "outDir": "../../dist/out-tsc",
-    "types": ["vitest/globals", "vitest/importMeta", "vite/client", "node"]
+    "types": [
+      "vitest",
+      "vitest/globals",
+      "vitest/importMeta",
+      "vite/client",
+      "node"
+    ]
   },
   "include": [
     "vite.config.unit.ts",
